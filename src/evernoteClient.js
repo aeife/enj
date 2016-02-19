@@ -68,13 +68,6 @@ function createDailyNote (cb) {
     <en-note></en-note>
   `;
 
-  console.log(note.content);
-
-  // note.content = '<?xml version="1.0" encoding="UTF-8"?>';
-  // note.content += '<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">';
-  // note.content += '<en-note>TEST<br/>';
-  // note.content += '</en-note>';
-
   noteStore.createNote(note, function(err, createdNote) {
     if (err) {
       console.log('error while creating daily note');
@@ -97,6 +90,7 @@ function setApplicationDataForNote (guid, cb) {
 
 function addText (text) {
   let time = moment().format('h:mm:ss a');
+  text = text.replace(/\n/g, '<br/>')
   let tmpl = `
     <div>
       <span>

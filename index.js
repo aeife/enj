@@ -11,7 +11,7 @@ if (!config.developerKey) {
     type: 'input',
     name: 'key',
     message: '>'
-  }], function(answer) {
+  }], answer => {
     config.developerKey = answer.key;
     fs.writeFile('./config.json', JSON.stringify(config, null, 2), err => {
       if(err) {
@@ -27,8 +27,34 @@ if (!config.developerKey) {
   program.parse(process.argv);
 
   if (program.args.length) {
-    evernoteClient.init(config, () => {
-      evernoteClient.addText(program.args.join(' '));
-    });
+    saveTextInEvernote(program.args.join(' '));
+  } else {
+    multiLineText();
   }
+}
+
+function saveTextInEvernote (text) {
+  evernoteClient.init(config, () => {
+    evernoteClient.addText(text);
+  });
+}
+
+function multiLineText(text = '') {
+  console.log(`
+    Welcome to ENJ, the evernote journal in your terminal.
+    This is the multi line mode.
+    Type 'q' and press enter to submit your text
+  `);
+  inquirer.prompt([{
+    type: "input",
+    name: "text",
+    message: ">"
+  }], answer => {
+      if (answer.text === "q") {
+        saveTextInEvernote(text);
+      } else {
+          text += answer.text + "\n";
+          multiLineText(text);
+      }
+  });
 }
