@@ -20,7 +20,10 @@ const webpackConfig = {
       exclude: /node_modules/,
       loader: 'babel'
     }]
-  }
+  },
+  plugins: [
+    new webpack.BannerPlugin('#!/usr/bin/env node', {raw: true, entryOnly: true})
+  ]
 };
 
 export default webpackConfig;
