@@ -1,0 +1,22 @@
+{
+  "name": "enj",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "babel-node -- index.js"
+  },
+  "author": "André Eife <andre.eife@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "crypto": "0.0.3",
+    "evernote": "^1.25.82",
+    "moment": "^2.11.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.5.1",
+    "babel-core": "^6.5.2",
+    "babel-preset-es2015": "^6.5.0"
+  }
+}
