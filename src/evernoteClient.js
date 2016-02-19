@@ -12,7 +12,7 @@ export default {
 };
 
 function init (cb) {
-  const authToken = '';
+  const authToken = require('../config.json').developerKey;
 
   if (authToken == 'your developer token') {
     console.log('Please fill in your developer token');
