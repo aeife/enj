@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "babel-node -- index.js",
-    "build": "webpack --config ./webpack.config.babel.js --colors --progress && cp ./config.json ./dist/config.json"
+    "build": "webpack --config ./webpack.config.babel.js --colors --progress && cp ./config.example.json ./dist/config.json"
   },
   "author": "André Eife <andre.eife@gmail.com>",
   "license": "MIT",
