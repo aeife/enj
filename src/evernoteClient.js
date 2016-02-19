@@ -11,14 +11,8 @@ export default {
   addText
 };
 
-function init (cb) {
-  const authToken = require('../config.json').developerKey;
-
-  if (authToken == 'your developer token') {
-    console.log('Please fill in your developer token');
-    console.log('To get a developer token, visit https://sandbox.evernote.com/api/DeveloperToken.action');
-    process.exit(1);
-  }
+function init (config, cb) {
+  const authToken = config.developerKey;
 
   client = new Evernote.Client({token: authToken, sandbox: true});
   noteStore = client.getNoteStore();
