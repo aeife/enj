@@ -1,5 +1,6 @@
 import {Evernote} from 'evernote';
 import moment from 'moment';
+import templates from './templates';
 
 const applicationName = 'simpleEdit';
 let client;
@@ -89,25 +90,9 @@ function setApplicationDataForNote (guid, cb) {
 }
 
 function addText (text) {
-  let time = moment().format('h:mm:ss a');
+  let time = moment().format('h:mm a');
   text = text.replace(/\n/g, '<br/>')
-  let tmpl = `
-    <div>
-      <span>
-        <br clear="none"/>
-      </span>
-    </div>
-    <div>
-      <span>
-        <strong>${time}</strong>
-        <br clear="none"/>
-        <span>
-          ${text}
-        </span>
-        <br clear="none"/>
-      </span>
-    </div>
-  `;
+  let tmpl = templates.separator() + templates.timeStamp(time) + templates.entry(text);
   dailyNote.content = dailyNote.content.replace('</en-note>', tmpl + '</en-note>');
   noteStore.updateNote(dailyNote, function (err, result) {
     if (err) {
