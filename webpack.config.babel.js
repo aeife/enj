@@ -7,7 +7,7 @@ const webpackConfig = {
   entry: './index.js',
   output: {
     filename: "enj.js",
-    path: './dist',
+    path: './bin',
     libraryTarget: "commonjs"
   },
   externals: [

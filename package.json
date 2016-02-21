@@ -3,10 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "bin": {
+    "enj": "./bin/enj.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "babel-node -- index.js",
-    "build": "webpack --config ./webpack.config.babel.js --colors --progress && cp ./config.example.json ./dist/config.json"
+    "build": "webpack --config ./webpack.config.babel.js --colors --progress"
   },
   "author": "André Eife <andre.eife@gmail.com>",
   "license": "MIT",
