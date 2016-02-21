@@ -1,6 +1,7 @@
 import {Evernote} from 'evernote';
 import moment from 'moment';
 import templates from './templates';
+import winston from 'winston';
 
 const applicationName = 'simpleEdit';
 let client;
@@ -20,7 +21,7 @@ function init (config, cb) {
 
   getDailyNote(note => {
     dailyNote = note;
-    console.log('ready');
+    winston.debug('initialized and ready to write daily note');
     cb();
   });
 }
@@ -31,16 +32,16 @@ function getDailyNote (cb) {
 
   client.getNoteStore().findNotesMetadata(filter, 0, 1, spec, function (err, result) {
       if (err) {
-          console.log('error while searching daily note');
-          console.log(err);
+          winston.error('error while searching daily note');
+          winston.debug(err);
       } else {
         if (!result.notes.length) {
-          console.log('no daily note available yet');
+          winston.debug('no daily note available yet');
           createDailyNote(({guid}) => {
             getNote(guid, cb)
           });
         } else {
-          console.log('daily note already exists');
+          winston.debug('daily note already exists');
           getNote(result.notes[0].guid, cb)
         }
       }
@@ -48,11 +49,11 @@ function getDailyNote (cb) {
 }
 
 function getNote (guid, cb) {
-  console.log('fetching daily note');
+  winston.debug('fetching daily note');
   noteStore.getNote(guid, true, true, true, true, function (err, note) {
     if (err) {
-      console.log('error while fetching note');
-      console.log(err);
+      winston.error('error while fetching note');
+      winston.debug(err);
     } else {
       cb(note);
     }
@@ -60,7 +61,7 @@ function getNote (guid, cb) {
 }
 
 function createDailyNote (cb) {
-  console.log('creating daily note');
+  winston.debug('creating daily note');
   let note = new Evernote.Note();
   note.title = moment().format('MMMM Do YYYY');
 
@@ -71,7 +72,8 @@ function createDailyNote (cb) {
 
   noteStore.createNote(note, function(err, createdNote) {
     if (err) {
-      console.log('error while creating daily note');
+      winston.error('error while creating daily note');
+      winston.debug(err);
     } else {
       setApplicationDataForNote(createdNote.guid, cb)
     }
@@ -79,10 +81,11 @@ function createDailyNote (cb) {
 }
 
 function setApplicationDataForNote (guid, cb) {
-  console.log('setting applicationData on daily note');
+  winston.debug('setting applicationData on daily note');
   noteStore.setNoteApplicationDataEntry(guid, applicationName, applicationName, function (err, result) {
     if (err){
-      console.log('error while setting applicationData for note');
+      winston.error('error while setting applicationData for note');
+      winston.debug(err);
     } else {
       cb({guid});
     }
@@ -102,10 +105,10 @@ function addText (text) {
   dailyNote.content = dailyNote.content.replace('</en-note>', tmpl + '</en-note>');
   noteStore.updateNote(dailyNote, function (err, result) {
     if (err) {
-      console.log("error while adding text to daily note");
-      console.log(err);
+      winston.error("error while adding text to daily note");
+      winston.debug(err);
     } else {
-      // console.log(result);
+      winston.debug('daily note successfully updated');
     }
   });
 }

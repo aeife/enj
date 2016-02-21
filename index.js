@@ -3,13 +3,19 @@ import program from 'commander';
 import inquirer from 'inquirer';
 import fs from 'fs';
 import path from 'path';
+import winston from 'winston';
+
+// prevent evernote sdk from logging to console
+console.log = () => {};
 
 const filePath = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
 const configFile = filePath + '/.enj';
 const config = fs.existsSync(configFile) ? JSON.parse(fs.readFileSync(configFile, 'utf8')) : {};
 if (!config.developerKey) {
-  console.log('Please fill in your developer token');
-  console.log('To get a developer token, visit https://sandbox.evernote.com/api/DeveloperToken.action');
+  console.info(`
+    Please fill in your developer token');
+    To get a developer token, visit https://sandbox.evernote.com/api/DeveloperToken.action
+  `);
   inquirer.prompt([{
     type: 'input',
     name: 'key',
@@ -18,10 +24,10 @@ if (!config.developerKey) {
     config.developerKey = answer.key;
     fs.writeFile(configFile, JSON.stringify(config, null, 2), err => {
       if(err) {
-        console.log('error while saving settings');
-        console.log(err);
+        winston.error('error while saving settings');
+        winston.debug(err);
       } else {
-        console.log('setting saved');
+        winston.debug('setting saved');
       }
     });
   });
@@ -33,6 +39,11 @@ if (!config.developerKey) {
   if (program.args.length) {
     saveTextInEvernote(program.args.join(' '));
   } else {
+    console.info(`
+      Welcome to ENJ, the evernote journal in your terminal.
+      This is the multi line mode.
+      Type 'q' and press enter to submit your text
+    `);
     multiLineText();
   }
 }
@@ -44,11 +55,6 @@ function saveTextInEvernote (text) {
 }
 
 function multiLineText(text = '') {
-  console.log(`
-    Welcome to ENJ, the evernote journal in your terminal.
-    This is the multi line mode.
-    Type 'q' and press enter to submit your text
-  `);
   inquirer.prompt([{
     type: "input",
     name: "text",
