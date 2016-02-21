@@ -1,9 +1,12 @@
 import evernoteClient from './src/evernoteClient';
 import program from 'commander';
-import config from './config.json';
 import inquirer from 'inquirer';
 import fs from 'fs';
+import path from 'path';
 
+const filePath = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
+const configFile = filePath + '/.enj';
+const config = fs.existsSync(configFile) ? JSON.parse(fs.readFileSync(configFile, 'utf8')) : {};
 if (!config.developerKey) {
   console.log('Please fill in your developer token');
   console.log('To get a developer token, visit https://sandbox.evernote.com/api/DeveloperToken.action');
@@ -13,9 +16,10 @@ if (!config.developerKey) {
     message: '>'
   }], answer => {
     config.developerKey = answer.key;
-    fs.writeFile('./config.json', JSON.stringify(config, null, 2), err => {
+    fs.writeFile(configFile, JSON.stringify(config, null, 2), err => {
       if(err) {
         console.log('error while saving settings');
+        console.log(err);
       } else {
         console.log('setting saved');
       }
