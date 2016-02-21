@@ -91,8 +91,14 @@ function setApplicationDataForNote (guid, cb) {
 
 function addText (text) {
   let time = moment().format('h:mm a');
-  text = text.replace(/\n/g, '<br/>')
-  let tmpl = templates.separator() + templates.timeStamp(time) + templates.entry(text);
+  text = text.replace(/\n/g, '<br/>');
+  let tmpl;
+  if (dailyNote.content.indexOf(templates.timeStamp(time)) > -1) {
+    tmpl = templates.entry(text);
+  } else {
+    tmpl = templates.separator() + templates.timeStamp(time) + templates.entry(text);
+  }
+
   dailyNote.content = dailyNote.content.replace('</en-note>', tmpl + '</en-note>');
   noteStore.updateNote(dailyNote, function (err, result) {
     if (err) {
