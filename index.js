@@ -1,4 +1,5 @@
 import evernoteClient from './src/evernoteClient';
+import config from './src/config.js';
 import program from 'commander';
 import inquirer from 'inquirer';
 import fs from 'fs';
@@ -9,10 +10,7 @@ import winston from 'winston';
 console.log = () => {};
 winston.level = 'debug';
 
-const filePath = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
-const configFile = filePath + '/.enj';
-const config = fs.existsSync(configFile) ? JSON.parse(fs.readFileSync(configFile, 'utf8')) : {};
-if (!config.developerKey) {
+if (!config.get().developerKey) {
   console.info(`
     Please fill in your developer token');
     To get a developer token, visit https://sandbox.evernote.com/api/DeveloperToken.action
@@ -22,21 +20,18 @@ if (!config.developerKey) {
     name: 'key',
     message: '>'
   }], answer => {
-    config.developerKey = answer.key;
-    saveConfig();
+    config.set('developerKey', answer.key);
   });
-} else if (!config.notebook) {
-  evernoteClient.init(config, () => {
+} else if (!config.get().notebook) {
+  evernoteClient.init(() => {
     evernoteClient.getNotebooks(notebooks => {
-      console.info(notebooks);
       inquirer.prompt([{
         type: "list",
         name: "notebook",
         message: "Choose a notebook for your journal",
         choices: notebooks.map(notebook => notebook.name)
       }], answer => {
-        config.notebook = notebooks.find(notebook => notebook.name === answer.notebook).guid;
-        saveConfig();
+        config.set('notebook', notebooks.find(notebook => notebook.name === answer.notebook).guid);
       });
     })
   });
@@ -58,7 +53,7 @@ if (!config.developerKey) {
 }
 
 function saveTextInEvernote (text) {
-  evernoteClient.init(config, () => {
+  evernoteClient.init(() => {
     evernoteClient.addText(text);
   });
 }
@@ -75,16 +70,5 @@ function multiLineText(text = '') {
           text += answer.text + "\n";
           multiLineText(text);
       }
-  });
-}
-
-function saveConfig () {
-  fs.writeFile(configFile, JSON.stringify(config, null, 2), err => {
-    if(err) {
-      winston.error('error while saving settings');
-      winston.debug(err);
-    } else {
-      winston.debug('setting saved');
-    }
   });
 }

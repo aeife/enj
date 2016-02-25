@@ -1,4 +1,5 @@
 import {Evernote} from 'evernote';
+import config from './config.js';
 import moment from 'moment';
 import templates from './templates';
 import winston from 'winston';
@@ -7,7 +8,6 @@ const applicationName = 'simpleEdit';
 let client;
 let noteStore;
 let dailyNote;
-let config;
 
 export default {
   init,
@@ -15,9 +15,8 @@ export default {
   getNotebooks
 };
 
-function init (newConfig, cb) {
-  config = newConfig;
-  const authToken = config.developerKey;
+function init (cb) {
+  const authToken = config.get().developerKey;
 
   client = new Evernote.Client({token: authToken, sandbox: true});
   noteStore = client.getNoteStore();
@@ -66,7 +65,7 @@ function getNote (guid, cb) {
 function createDailyNote (cb) {
   winston.debug('creating daily note');
   let note = new Evernote.Note();
-  note.notebookGuid = config.notebook;
+  note.notebookGuid = config.get().notebook;
   note.title = moment().format('MMMM Do YYYY');
 
   note.content = `<?xml version="1.0" encoding="UTF-8"?>
