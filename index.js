@@ -2,9 +2,6 @@ import evernoteClient from './src/evernoteClient';
 import config from './src/config.js';
 import prompts from './src/prompts.js';
 import program from 'commander';
-import inquirer from 'inquirer';
-import fs from 'fs';
-import path from 'path';
 import winston from 'winston';
 
 // prevent evernote sdk from logging to console
