@@ -7,13 +7,16 @@ const applicationName = 'simpleEdit';
 let client;
 let noteStore;
 let dailyNote;
+let config;
 
 export default {
   init,
-  addText
+  addText,
+  getNotebooks
 };
 
-function init (config, cb) {
+function init (newConfig, cb) {
+  config = newConfig;
   const authToken = config.developerKey;
 
   client = new Evernote.Client({token: authToken, sandbox: true});
@@ -63,6 +66,7 @@ function getNote (guid, cb) {
 function createDailyNote (cb) {
   winston.debug('creating daily note');
   let note = new Evernote.Note();
+  note.notebookGuid = config.notebook;
   note.title = moment().format('MMMM Do YYYY');
 
   note.content = `<?xml version="1.0" encoding="UTF-8"?>
@@ -109,6 +113,18 @@ function addText (text) {
       winston.debug(err);
     } else {
       winston.debug('daily note successfully updated');
+    }
+  });
+}
+
+function getNotebooks (cb) {
+  noteStore.listNotebooks(function(err, notebooks){
+    if (err) {
+      winston.error("error while fetching notebooks");
+      winston.debug(err);
+    } else {
+      winston.debug('list of notebooks loaded');
+      cb(notebooks);
     }
   });
 }

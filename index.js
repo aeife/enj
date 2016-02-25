@@ -7,6 +7,7 @@ import winston from 'winston';
 
 // prevent evernote sdk from logging to console
 console.log = () => {};
+winston.level = 'debug';
 
 const filePath = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
 const configFile = filePath + '/.enj';
@@ -22,14 +23,22 @@ if (!config.developerKey) {
     message: '>'
   }], answer => {
     config.developerKey = answer.key;
-    fs.writeFile(configFile, JSON.stringify(config, null, 2), err => {
-      if(err) {
-        winston.error('error while saving settings');
-        winston.debug(err);
-      } else {
-        winston.debug('setting saved');
-      }
-    });
+    saveConfig();
+  });
+} else if (!config.notebook) {
+  evernoteClient.init(config, () => {
+    evernoteClient.getNotebooks(notebooks => {
+      console.info(notebooks);
+      inquirer.prompt([{
+        type: "list",
+        name: "notebook",
+        message: "Choose a notebook for your journal",
+        choices: notebooks.map(notebook => notebook.name)
+      }], answer => {
+        config.notebook = notebooks.find(notebook => notebook.name === answer.notebook).guid;
+        saveConfig();
+      });
+    })
   });
 } else {
   program
@@ -66,5 +75,16 @@ function multiLineText(text = '') {
           text += answer.text + "\n";
           multiLineText(text);
       }
+  });
+}
+
+function saveConfig () {
+  fs.writeFile(configFile, JSON.stringify(config, null, 2), err => {
+    if(err) {
+      winston.error('error while saving settings');
+      winston.debug(err);
+    } else {
+      winston.debug('setting saved');
+    }
   });
 }
