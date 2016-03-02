@@ -7,13 +7,15 @@ import async from 'async';
 
 // prevent evernote sdk from logging to console
 console.log = () => {};
-winston.level = 'debug';
 
 async.series([ensureDeveloperTokenConfig, ensureNotebookConfig], cb => {
   let cmdExecuted = false;
 
   program
-    .version('0.0.1');
+    .version('0.0.1')
+    .option('--verbose', 'An integer argument', () => {
+      winston.level = 'debug'
+    });
 
   program
     .command('* [text...]')
