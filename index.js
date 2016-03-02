@@ -45,6 +45,11 @@ function configure (configOption) {
         process.exit(0);
       });
       break;
+    case 'devToken': {
+      prompts.requestDeveloperToken(() => {
+        process.exit(0);
+      });
+    }
   }
 }
 
@@ -52,7 +57,7 @@ function ensureDeveloperTokenConfig (cb) {
   if (!config.get().developerKey) {
     prompts.requestDeveloperToken(cb);
   } else {
-    cb()
+    cb();
   }
 }
 

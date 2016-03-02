@@ -21,8 +21,7 @@ function requestDeveloperToken (cb) {
     name: 'key',
     message: '>'
   }], answer => {
-    config.set('developerKey', answer.key);
-    cb();
+    config.set('developerKey', answer.key, cb);
   });
 }
 
@@ -35,8 +34,7 @@ function requestJournalNotebook (cb) {
         message: "Choose a notebook for your journal",
         choices: notebooks.map(notebook => notebook.name)
       }], answer => {
-        config.set('notebook', notebooks.find(notebook => notebook.name === answer.notebook).guid);
-        cb();
+        config.set('notebook', notebooks.find(notebook => notebook.name === answer.notebook).guid, cb);
       });
     })
   });
@@ -79,6 +77,9 @@ function configOptions (cb) {
     choices: [{
       name: 'Journal Notebook',
       value: 'notebook'
+    }, {
+      name: 'Developer Token',
+      value: 'devToken'
     }]
   }], answer => {
     cb(answer.config);

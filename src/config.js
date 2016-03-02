@@ -18,18 +18,21 @@ function get () {
   return config;
 }
 
-function set (key, value) {
+function set (key, value, cb) {
   config[key] = value;
-  save();
+  save(cb);
 }
 
-function save () {
+function save (cb) {
   fs.writeFile(configFile, JSON.stringify(config, null, 2), err => {
     if(err) {
       winston.error('error while saving settings');
       winston.debug(err);
     } else {
       winston.debug('setting saved');
+      if (cb) {
+        cb();
+      }
     }
   });
 }
