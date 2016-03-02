@@ -45,11 +45,11 @@ function configure (configOption) {
         process.exit(0);
       });
       break;
-    case 'devToken': {
+    case 'devToken':
       prompts.requestDeveloperToken(() => {
         process.exit(0);
       });
-    }
+      break;
   }
 }
 
