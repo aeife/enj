@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import winston from 'winston';
+import { handleError } from './errorHandler';
 
 let filePath;
 let configFile;
@@ -25,14 +26,10 @@ function set (key, value, cb) {
 
 function save (cb) {
   fs.writeFile(configFile, JSON.stringify(config, null, 2), err => {
-    if(err) {
-      winston.error('error while saving settings');
-      winston.debug(err);
-    } else {
-      winston.debug('setting saved');
-      if (cb) {
-        cb();
-      }
+    handleError(err, 'saving settings');
+    winston.debug('setting saved');
+    if (cb) {
+      cb();
     }
   });
 }
