@@ -10,16 +10,43 @@ console.log = () => {};
 winston.level = 'debug';
 
 async.series([ensureDeveloperTokenConfig, ensureNotebookConfig], cb => {
+  let cmdExecuted = false;
+
   program
     .version('0.0.1');
+
+  program
+    .command('* [text...]')
+    .description('text input')
+    .action(function(text){
+      cmdExecuted = true;
+      saveTextInEvernote(text.join(' '));
+    });
+
+  program
+    .command('config')
+    .description('configuration')
+    .action(function(){
+      cmdExecuted = true;
+      prompts.configOptions(configure);
+    });
+
   program.parse(process.argv);
 
-  if (program.args.length) {
-    saveTextInEvernote(program.args.join(' '));
-  } else {
+  if (!cmdExecuted) {
     prompts.multiLineEntry(saveTextInEvernote);
   }
 });
+
+function configure (configOption) {
+  switch (configOption) {
+    case 'notebook':
+      prompts.requestJournalNotebook(() => {
+        process.exit(0);
+      });
+      break;
+  }
+}
 
 function ensureDeveloperTokenConfig (cb) {
   if (!config.get().developerKey) {

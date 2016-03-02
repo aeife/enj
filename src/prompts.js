@@ -6,7 +6,8 @@ import inquirer from 'inquirer';
 export default {
   requestDeveloperToken,
   requestJournalNotebook,
-  multiLineEntry
+  multiLineEntry,
+  configOptions
 };
 
 function requestDeveloperToken (cb) {
@@ -61,5 +62,19 @@ function multiLineText (cb, text = '') {
           text += answer.text + "\n";
           multiLineText(cb, text);
       }
+  });
+}
+
+function configOptions (cb) {
+  inquirer.prompt([{
+    type: "list",
+    name: "config",
+    message: "What do you want to configure?",
+    choices: [{
+      name: 'Journal Notebook',
+      value: 'notebook'
+    }]
+  }], answer => {
+    cb(answer.config);
   });
 }
