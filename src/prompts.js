@@ -2,6 +2,7 @@ import config from './config.js';
 import evernoteClient from './evernoteClient.js';
 import winston from 'winston';
 import inquirer from 'inquirer';
+import readline from 'readline';
 
 export default {
   requestDeveloperToken,
@@ -45,23 +46,28 @@ function multiLineEntry (cb) {
   console.info(`
     Welcome to ENJ, the evernote journal in your terminal.
     This is the multi line mode.
-    Type 'q' and press enter to submit your text
+    Quit process (Cmd/Ctrl + C) or type 'q' and press enter to submit your text.
   `);
-  multiLineText(cb);
-}
 
-function multiLineText (cb, text = '') {
-  inquirer.prompt([{
-    type: "input",
-    name: "text",
-    message: ">"
-  }], answer => {
-      if (answer.text === "q") {
-        cb(text);
-      } else {
-          text += answer.text + "\n";
-          multiLineText(cb, text);
-      }
+  const input = [];
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+
+  rl.setPrompt('')
+  rl.prompt();
+
+  rl.on('line', function (cmd) {
+    if (cmd === 'q') {
+      rl.close();
+    } else {
+      input.push(cmd);
+    }
+  });
+
+  rl.on('close', function (cmd) {
+    cb(input.join('\n'));
   });
 }
 
