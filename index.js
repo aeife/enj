@@ -52,6 +52,11 @@ function configure (configOption) {
         process.exit(0);
       });
       break;
+    case config.options.SANDBOX:
+      prompts.selectSandboxMode(() => {
+        process.exit(0);
+      });
+      break;
   }
 }
 

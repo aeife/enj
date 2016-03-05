@@ -8,6 +8,7 @@ export default {
   requestDeveloperToken,
   requestJournalNotebook,
   multiLineEntry,
+  selectSandboxMode,
   configOptions
 };
 
@@ -69,6 +70,17 @@ function multiLineEntry (cb) {
   });
 }
 
+function selectSandboxMode (cb) {
+  inquirer.prompt([{
+    type: "confirm",
+    name: "sandbox",
+    message: "Do you want to use evernote sandbox mode?",
+    default: false
+  }], answer => {
+    config.set('sandbox', answer.sandbox, cb);
+  });
+}
+
 function configOptions (cb) {
   inquirer.prompt([{
     type: "list",
@@ -80,6 +92,9 @@ function configOptions (cb) {
     }, {
       name: 'Developer Token',
       value: config.options.DEVTOKEN
+    }, {
+      name: 'Sandbox Mode',
+      value: config.options.SANDBOX
     }]
   }], answer => {
     cb(answer.config);

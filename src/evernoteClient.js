@@ -19,7 +19,7 @@ export default {
 function init (cb) {
   const authToken = config.get().developerKey;
 
-  client = new Evernote.Client({token: authToken, sandbox: true});
+  client = new Evernote.Client({token: authToken, sandbox: !!config.get().sandbox});
   noteStore = client.getNoteStore();
 
   getDailyNote(note => {
