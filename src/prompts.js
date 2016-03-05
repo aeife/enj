@@ -76,10 +76,10 @@ function configOptions (cb) {
     message: "What do you want to configure?",
     choices: [{
       name: 'Journal Notebook',
-      value: 'notebook'
+      value: config.options.NOTEBOOK
     }, {
       name: 'Developer Token',
-      value: 'devToken'
+      value: config.options.DEVTOKEN
     }]
   }], answer => {
     cb(answer.config);

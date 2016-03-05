@@ -9,7 +9,12 @@ let config;
 
 export default {
   get,
-  set
+  set,
+  options: {
+    DEVTOKEN: 'DEVTOKEN',
+    NOTEBOOK: 'NOTEBOOK',
+    SANDBOX: 'SANDBOX'
+  }
 };
 
 function get () {

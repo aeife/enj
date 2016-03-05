@@ -42,12 +42,12 @@ async.series([ensureDeveloperTokenConfig, ensureNotebookConfig], cb => {
 
 function configure (configOption) {
   switch (configOption) {
-    case 'notebook':
+    case config.options.NOTEBOOK:
       prompts.requestJournalNotebook(() => {
         process.exit(0);
       });
       break;
-    case 'devToken':
+    case config.options.DEVTOKEN:
       prompts.requestDeveloperToken(() => {
         process.exit(0);
       });
