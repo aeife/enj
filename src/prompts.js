@@ -95,8 +95,76 @@ function configOptions (cb) {
     }, {
       name: 'Sandbox Mode',
       value: config.options.SANDBOX
+    }, {
+      name: 'Date Format',
+      value: config.options.DATEFORMAT
+    }, {
+      name: 'Time Format',
+      value: config.options.TIMEFORMAT
     }]
   }], answer => {
-    cb(answer.config);
+    switch (answer.config) {
+      case config.options.NOTEBOOK:
+        requestJournalNotebook(() => {
+          cb();
+        });
+        break;
+      case config.options.DEVTOKEN:
+        requestDeveloperToken(() => {
+          cb();
+        });
+        break;
+      case config.options.SANDBOX:
+        selectSandboxMode(() => {
+          cb();
+        });
+        break;
+      case config.options.TIMEFORMAT:
+        configureTimeFormat(() => {
+          cb();
+        });
+        break;
+      case config.options.DATEFORMAT:
+        configureDateFormat(() => {
+          cb();
+        });
+        break;
+    }
+  });
+}
+
+function configureTimeFormat (cb) {
+  inquirer.prompt([{
+    type: "list",
+    name: "timeFormat",
+    message: "Choose a time format for your journal",
+    default: config.get().timeformat === config.timeFormats.H24? 1 : 0,
+    choices: [{
+      name: '12h - 03:36 pm',
+      value: config.timeFormats.H12
+    }, {
+      name: '24h - 15:36',
+      value: config.timeFormats.H24
+    }]
+  }], answer => {
+    config.set('timeformat', answer.timeFormat, cb);
+  });
+}
+
+function configureDateFormat (cb) {
+  inquirer.prompt([{
+    type: "list",
+    name: "dateFormat",
+    message: "Choose a date format for your journal",
+    default: config.get().dateformat === config.dateFormats.EUROPEAN ? 1 : 0,
+    choices: [{
+      name: 'March 14th 2016',
+      value: config.dateFormats.AMERICAN
+    }, {
+      name: '14. March 2016',
+      value: config.dateFormats.EUROPEAN
+    }]
+  }], answer => {
+    config.set('dateformat', answer.dateFormat, cb);
   });
 }

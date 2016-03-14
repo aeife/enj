@@ -13,7 +13,17 @@ export default {
   options: {
     DEVTOKEN: 'DEVTOKEN',
     NOTEBOOK: 'NOTEBOOK',
-    SANDBOX: 'SANDBOX'
+    SANDBOX: 'SANDBOX',
+    DATEFORMAT: 'DATEFORMAT',
+    TIMEFORMAT: 'TIMEFORMAT'
+  },
+  timeFormats: {
+      H24: 'HH:mm',
+      H12: 'hh:mm a'
+  },
+  dateFormats: {
+    AMERICAN: 'MMMM Do YYYY',
+    EUROPEAN: 'DD. MMMM YYYY'
   }
 };
 

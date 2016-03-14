@@ -13,7 +13,8 @@ let dailyNote;
 export default {
   init,
   addText,
-  getNotebooks
+  getNotebooks,
+  outputDailyNote
 };
 
 function init (cb) {
@@ -50,7 +51,7 @@ function getDailyNote (cb) {
 function getNote (guid, cb) {
   winston.debug('fetching daily note');
   noteStore.getNote(guid, true, true, true, true, function (err, note) {
-    handleError(err, 'searching fetching note');
+    handleError(err, 'fetching note');
     cb(note);
   });
 }
@@ -59,7 +60,7 @@ function createDailyNote (cb) {
   winston.debug('creating daily note');
   let note = new Evernote.Note();
   note.notebookGuid = config.get().notebook;
-  note.title = moment().format('MMMM Do YYYY');
+  note.title = moment().format(config.get().dateformat || config.dateFormats.AMERICAN);
 
   note.content = `<?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">
@@ -81,7 +82,7 @@ function setApplicationDataForNote (guid, cb) {
 }
 
 function addText (text) {
-  let time = moment().format('h:mm a');
+  let time = moment().format(config.get().timeformat || config.timeFormats.H12);
   text = text.replace(/\n/g, '<br/>');
   let tmpl;
   if (dailyNote.content.indexOf(templates.timeStamp(time)) > -1) {
@@ -104,3 +105,28 @@ function getNotebooks (cb) {
     cb(notebooks);
   });
 }
+
+function outputDailyNote (cb) {
+  getDailyNote(note => {
+    var a = replaceAll(note.content, [
+      '<div>', '</div>', '<span>', '</span>',
+      '<strong>', '</strong>', '<en-note>', '</en-note>',
+      '<\\?xml version=\"1.0\" encoding=\"UTF-8\"\\?>',
+      '<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">',
+      '\n'
+    ], '');
+    a = replaceAll(a, [
+      '<br clear=\"none\"/>',
+      '<br/>',
+    ], '\n')
+    console.info(a);
+    cb();
+  });
+}
+
+function replaceAll (text, searchTerms, replacement) {
+  var t = searchTerms.reduce((prev, current) => prev.replace(new RegExp(current, 'g'), replacement), text);
+  // console.info(t);
+  // process.stdout.write(JSON.stringify(t));
+  return t;
+};
