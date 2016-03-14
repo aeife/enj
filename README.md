@@ -65,7 +65,7 @@ This will automatically start multi line mode. You now can type in text and crea
 All configuration for *enj* is stored in the `.enj` file in your user home directory.
 
 #### Change the current configuration
-TYou can change the current *enj* configuration with the following command:
+You can change the current *enj* configuration with the following command:
 
     enj config
 
