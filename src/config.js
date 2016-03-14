@@ -25,6 +25,9 @@ function get () {
 }
 
 function set (key, value, cb) {
+  if (!config) {
+    init();
+  }
   config[key] = value;
   save(cb);
 }
